@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SQLite;
+using System;
 
 namespace Octagon.Models
 {
@@ -30,11 +29,12 @@ namespace Octagon.Models
         /// <summary>
         /// Id.
         /// </summary>
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         /// <summary>
         /// Time at which the checking was done.
-        /// </summary>
+        /// </summary>        
         public DateTime Timestamp { get; set; }
 
         /// <summary>
