@@ -66,6 +66,7 @@
     <Compile Include="DataAccess\SQLiteDb.cs" />
     <Compile Include="DataAccess\SQLiteDbTest.cs" />
     <Compile Include="IO\SQLiteConfiguration.cs" />
+    <Compile Include="Models\WorkedTimeCalculatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

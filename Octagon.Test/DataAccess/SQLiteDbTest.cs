@@ -98,22 +98,77 @@ namespace Octagon.Test.DataAccess
         [TestMethod]
         public async Task ShouldInsertWithIdAndRecoverSameCheking()
         {
-            var date = new DateTime(2018, 5, 2, 17, 0, 0);
-            var checkingToInsert = new Checking
-            {
-                Timestamp = date,
-                Direction = CheckingDirection.Out
-            };
+            var timestamp = new DateTime(2018, 5, 2, 17, 0, 0);
+            var checkingToInsert = CreateFakeChecking(timestamp);
 
-            await _db.InsertAsync(checkingToInsert);
+            //Id is modified in place after insertion by SQLite PCL.
+            var rowsInsertedCount = await _db.InsertAsync(checkingToInsert);
             var insertedChecking = await _db.Table<Checking>()
-                .Where(checking => checking.Timestamp == date)
+                .Where(checking => checking.Id == checkingToInsert.Id)
                 .FirstOrDefaultAsync();
 
             await _db.DeleteAsync(insertedChecking);
 
             Assert.IsNotNull(insertedChecking);
             Assert.AreNotEqual(0, insertedChecking.Id);
+        }
+
+        [TestMethod]
+        public async Task ShouldInsertAndRecoverUtcDateTime()
+        {
+            var timestamp = new DateTime(2018, 5, 2, 17, 0, 0, DateTimeKind.Utc);
+            var checkingToInsert = CreateFakeChecking(timestamp);
+
+            await _db.InsertAsync(checkingToInsert);
+            var insertedChecking = await _db.Table<Checking>()
+                .Where(checking => checking.Timestamp == timestamp)
+                .FirstOrDefaultAsync();
+
+            await _db.DeleteAsync(insertedChecking);
+
+            Assert.IsNotNull(insertedChecking);
+        }
+
+        [TestMethod]
+        public async Task ShouldRecoverMostRecentChecking()
+        {
+            var beforeTimestamp = new DateTime(2018, 5, 2, 17, 0, 0, DateTimeKind.Utc);
+            var afterTimestamp = new DateTime(2019, 5, 2, 17, 0, 0, DateTimeKind.Utc);
+            var fromTimestamp = new DateTime(2019, 1, 1, 0, 0, 0);
+            var checkingsToInsert = new List<Checking>
+            {
+                CreateFakeChecking(beforeTimestamp),
+                CreateFakeChecking(afterTimestamp)
+            };
+
+            await _db.InsertAllAsync(checkingsToInsert);
+            var insertedCheckings = await _db.Table<Checking>()
+                .Where(checking => checking.Timestamp > fromTimestamp)
+                .ToListAsync();
+
+            foreach(var insertedChecking in insertedCheckings)
+            {
+                await _db.DeleteAsync(insertedChecking);
+            }
+
+            Assert.IsTrue(insertedCheckings.Count == 1);
+            Assert.IsNotNull(insertedCheckings);
+        }
+
+        /// <summary>
+        /// Creates a fake checking.
+        /// </summary>
+        /// <param name="timestamp">Timestamp of
+        /// the checking.</param>
+        /// <returns>Fake checking.</returns>
+        private Checking CreateFakeChecking(DateTime timestamp)
+        {
+            return new Checking
+            {
+                Id = 0,
+                Timestamp = timestamp,
+                Direction = CheckingDirection.Out
+            };
         }
     }
 }
