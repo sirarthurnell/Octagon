@@ -53,7 +53,8 @@ namespace Octagon.Models
             Day = day;
 
             DayStart = new DateTime(year, month, day, 0, 0, 0);
-            var almost24Hours = new TimeSpan(0, 0, 59, 59, 99);
+            var oneHundredNanoseconds = TimeSpan.FromTicks(1);
+            var almost24Hours = TimeSpan.FromHours(24).Subtract(oneHundredNanoseconds);
             DayEnd = DayStart.Add(almost24Hours);
         }
 

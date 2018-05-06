@@ -66,6 +66,7 @@
     <Compile Include="DataAccess\SQLiteDb.cs" />
     <Compile Include="DataAccess\SQLiteDbTest.cs" />
     <Compile Include="IO\SQLiteConfiguration.cs" />
+    <Compile Include="Models\WorkingDayTest.cs" />
     <Compile Include="Models\WorkedTimeCalculatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -78,6 +79,7 @@
       <Name>Octagon</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
